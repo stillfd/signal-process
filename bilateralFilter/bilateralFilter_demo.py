@@ -33,6 +33,7 @@ def GuassianFilter(p,sigma, ra):
 	return res
 
 
+# sigmb should be small
 def BiLateralFilter(p,sigma, sigmb, ra):
 	K = np.zeros((2*ra+1,2*ra+1))
 	res = np.zeros((p.shape))
@@ -48,11 +49,16 @@ def BiLateralFilter(p,sigma, sigmb, ra):
 		for j in range(c):
 			Roi = pad[i:ra*2+1+i,j:ra*2+1+j]
 			H = np.exp(-(Roi - p[i,j])**2/(2*(sigmb**2))) 
+			# print(H)
+			# break
+			
 			res[i,j]= sum(sum(pad[i:ra*2+1+i,j:ra*2+1+j]*K*H))*1.0/sum(sum(K*H))
+		# break
 	return res
 
 
-img = mpimg.imread('VG.jpg')
+img = mpimg.imread('ML.jpg')
+print(img.shape)
 gray = rgb2gray(img)
 gray = gray/np.max(gray)
 plt.figure
@@ -61,12 +67,13 @@ plt.imshow(gray)
 plt.subplot(222) 
 r,c = gray.shape
 noise = wgn(r,c,0.3)
-gray2 = gray+0.5*(noise/np.max(noise))
+gray2 = gray
+# gray2 = gray+0.5*(noise/np.max(noise))
 plt.imshow(gray2)
-res = GuassianFilter(gray2,1,3)
+res = GuassianFilter(gray2,2,3)
 plt.subplot(223) 
 plt.imshow(res)
-res = BiLateralFilter(gray2,1,1,3)
+res = BiLateralFilter(gray2,2,0.1,3)
 plt.subplot(224) 
 plt.imshow(res)
 plt.show()
