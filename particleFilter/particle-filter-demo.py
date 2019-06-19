@@ -62,7 +62,9 @@ class RobotClass:
 		y = self.y + sin(orientation) * dist
 		x %= world_size
 		y %=  world_size
-		
+
+		# 注意！一定要返回新的，否则，在resample之后的move相当于
+		# 对同一个particle进行n次move操作， 当前的代码则是会在一个初始点产生n个结果		
 		res = RobotClass()
 		res.set(x,y,orientation)
 		res.set_noise(self.forward_noise, self.turn_noise, self.sense_noise)
@@ -140,7 +142,6 @@ def visualization(robot, step, p, pr):
 # main script
 MyRobot = RobotClass()
 MyRobot = MyRobot.move(0.1, 5.0)
-
 n = 1000  # number of particles
 p = []    # list of particles
  
@@ -184,6 +185,7 @@ for t in range(steps):
 	    p3.append(p[index])
 	 
 	visualization(MyRobot, t, p, p3)
+	# print(p3)
 	# here we get a set of co-located particles
 	p = p3
 	
